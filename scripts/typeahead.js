@@ -128,6 +128,28 @@ const searchOptions = [
     type: 'Hatchery Helpers',
     page: h.name,
   })),
+  // Towns
+  {
+    display: 'Towns',
+    type: 'Towns',
+    page: '',
+  },
+  ...Object.values(TownList).map(t => ({
+    display: t.name,
+    type: 'Towns',
+    page: t.name,
+  })),
+  // Routes
+  {
+    display: 'Routes',
+    type: 'Routes',
+    page: '',
+  },
+  ...Routes.regionRoutes.map(r => ({
+    display: r.routeName,
+    type: 'Routes',
+    page: r.routeName,
+  })),
 ];
 // Differentiate our different links with the same name
 searchOptions.forEach(a => {

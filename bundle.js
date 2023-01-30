@@ -12176,7 +12176,7 @@ module.exports = function whichTypedArray(value) {
 },{"available-typed-arrays":1,"call-bind/callBound":2,"for-each":5,"gopd":9,"has-tostringtag/shams":12,"is-typed-array":18}],101:[function(require,module,exports){
 module.exports={
   "name": "pokeclicker",
-  "version": "0.10.8",
+  "version": "0.10.9",
   "description": "PokéClicker repository",
   "main": "index.js",
   "scripts": {
@@ -12286,6 +12286,20 @@ const applyDatatables = () => {
             if (rows < 40 || doNotProcess) return;
 
             $(element).DataTable({
+                // Remember page/search/order
+                stateSave: true,
+                stateSaveCallback: function(settings, data) {
+                    sessionStorage.setItem(`DataTables_${Wiki.pageType()}_${Wiki.pageName()}_${i}`, JSON.stringify(data));
+                    // Only keep tables position if on same page type/parent
+                    Object.keys(sessionStorage).forEach((key) => {
+                        if (key.startsWith('DataTables') && !key.includes(Wiki.pageType())) {
+                            delete sessionStorage[key];
+                        }
+                    })
+                },
+                stateLoadCallback: function(settings) {
+                    return JSON.parse(sessionStorage.getItem(`DataTables_${Wiki.pageType()}_${Wiki.pageName()}_${i}`) || '{}');
+                },
                 // Bootstrap style tables, with responsive table
                 dom: `<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>><'row table-responsive'<'col-sm-12'tr>><'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 text-center'p>>`,
                 // Our custom page implementation 
@@ -13002,12 +13016,6 @@ const searchOptions = [
     type: 'Quest Lines',
     page: q.name,
   })),
-  // Farm
-    {
-      display: 'Farm',
-      type: 'Farm',
-      page: '',
-    },
   // Battle Cafe
   {
     display: 'Battle Café',
@@ -13059,6 +13067,17 @@ const searchOptions = [
     type: 'Routes',
     page: r.routeName,
   })),
+  // Farm
+  {
+    display: 'Farm',
+    type: 'Farm',
+    page: '',
+  },
+  {
+    display: 'Setups (Farm)',
+    type: 'Farm',
+    page: 'Setups',
+  },
 ];
 // Differentiate our different links with the same name
 searchOptions.forEach(a => {
